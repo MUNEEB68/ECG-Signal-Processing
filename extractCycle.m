@@ -5,8 +5,8 @@ if length(R_locs) < 3
     error('Need at least 3 R-peaks to extract a clean cycle');
 end
 
-R1 = R_locs(3); % first R-peak (skip first, may be partial)
-R2 = R_locs(4); % second R-peak
+R1 = R_locs(3); % 3rd R peak
+R2 = R_locs(4); % 4th R peak
 
 % extract the ECG cycle between R1 and R2
 one_cycle = ecg_filt(R1:R2);
