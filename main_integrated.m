@@ -1,0 +1,39 @@
+
+clc; clear; close all;
+
+%% Configuration & Data Loading (Task 1A)
+record = '200'; 
+Fs = 360; 
+% Note: processECG must return both leads for Stream C
+[t, ecg_raw, ecg_filt] = processECG(record); 
+
+%% Time-Domain Metrics (Task 1A)
+R_locs = detectRPeaks1(ecg_filt, Fs);
+[t_cycle, one_cycle] = extractCycle(ecg_filt, R_locs, t);
+[BPM, SDNN, RMSSD] = computeMetrics(R_locs, Fs);
+
+% Plot original Dashboard
+plotECGDashboard(t, ecg_filt, t_cycle, one_cycle, BPM, SDNN, RMSSD, R_locs);
+
+%% Frequency Domain Analysis (Task 1B)
+[BPM_freq, error_pct] = analyzeFrequencyDomain(ecg_raw, Fs, BPM);
+
+%% Classical Filtering - Stream A (Task 2)
+[ecg_iir, ecg_fir] = filterClassical(ecg_raw, Fs);
+
+%% Motion Artifact Removal - Stream B (Task 2)
+% We use the raw signal to show the power of wavelet denoising
+ecg_wavelet = denoiseAdaptive(ecg_raw, Fs);
+
+%% Multi-Lead Consistency - Stream C (Task 2)
+% Requires Lead 1 (MLII) and Lead 2 (V5) from the .dat file
+% Extracting leads again for verification
+fid = fopen([record '.dat'], 'r');
+raw_data = fread(fid, [2, inf], 'int16')';
+fclose(fid);
+lead_MLII = (raw_data(:,1) - 1024)/200;
+lead_V5   = (raw_data(:,2) - 1024)/200;
+
+checkLeadConsistency(lead_MLII, lead_V5, Fs);
+
+disp('--- Processing Complete ---');
