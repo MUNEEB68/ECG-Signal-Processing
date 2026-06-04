@@ -61,6 +61,3 @@ Notes
 - Some plots are intentionally verbose for report-quality screenshots.
 - If you do not have record 200, change the record ID in main_integrated.m.
 
-License
--------
-Add your preferred license here.
